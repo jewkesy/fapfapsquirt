@@ -28,10 +28,10 @@ function step() {
   else freq(0); // off
 }
 
-var tune = "EE EE  E E AA    CC G G  ";
+var tune = "EE EE  E E AA";
 var pos = 0;
 var i = 0;
-var win = 10;
+var win = 5;
 
 function onInit() {
   // Setup SPI
@@ -41,18 +41,27 @@ function onInit() {
   g = require("PCD8544").connect(spi,B13,B14,B15, function() {
     // When it's initialised, clear it and write some text
     g.clear();
-    g.drawString('Hello World!',0,0);
+    g.drawString('Hello Daryl!',0,0);
+    //showClock();
     // send the graphics to the display
     g.flip();
   });
-    i = 0;
-    pos = 0;
+  i = 0;
+  clearInterval(music);
+  //pos = 0;
 }
 
+function showClock() {
+  setInterval(function(e) {
+    g.drawString(new Date(),0,10);
+    g.flip();
+  }, 1000);
+}
 onInit();
 
 pinMode(B4, "input_pulldown");
 var BUZZER = B7;
+var music;
 
 setWatch(function(e) {
   i++;
@@ -60,17 +69,21 @@ setWatch(function(e) {
   if (!g) return; // graphics not initialised yet
   g.clear();
   if (i == win) {
+    pos = 0;
     g.drawString('You Won!!! ' + i,0,0);
     digitalWrite(BUZZER, 0.5);
-    setInterval(function(e) {
+    music = setInterval(function(e) {
       //freq(1500);
-      step(100);
+      step(60);
     }, 100);
-
-
+    setTimeout(function(e) {
+     //digitalPulse(LED1, 1, 1500);
+    digitalPulse(LED2, 1, 1500); 
+    }, 1000);
+    
   }
   else
-   g.drawString('Hello Fullstack! ' + i,0,0);
+    g.drawString('Score: ' + i,0,0);
   // send the graphics to the display
   g.flip();
   console.log('pressed ', i);
@@ -82,7 +95,7 @@ setWatch(function(e) {
 }, BTN, { repeat: true, debounce : 50, edge: "rising" });
 
 function freq(f) { 
-  console.log('calling freq', f);
+  //console.log('calling freq', f);
   if (f===0) digitalWrite(BUZZER,0);
   else analogWrite(BUZZER, 0.5, { freq: f } );
 }

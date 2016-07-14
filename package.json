@@ -1,0 +1,22 @@
+{
+  "name": "fapfapsquirt",
+  "version": "1.0.0",
+  "description": "Two Player Espruino Game",
+  "main": "game.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jewkesy/fapfapsquirt.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jewkesy/fapfapsquirt/issues"
+  },
+  "homepage": "https://github.com/jewkesy/fapfapsquirt#readme",
+  "dependencies": {
+    "serialport": "^4.0.1"
+  }
+}
