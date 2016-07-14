@@ -22,10 +22,18 @@ onInit();
 
 pinMode(B4, "input_pulldown");
 
+var i = 0;
+var win = 10;
 setWatch(function(e) {
+  i++;
+  if (i > win) return;
   if (!g) return; // graphics not initialised yet
   g.clear();
-  g.drawString('Hello Fullstack!',0,0);
+  if (i == win)
+    g.drawString('You Won!!! ' + i,0,0);
+  else
+   g.drawString('Hello Fullstack! ' + i,0,0);
   // send the graphics to the display
   g.flip();
+  console.log('pressed ', i);
 }, B4, { repeat: true, debounce : 50, edge: "rising" });
