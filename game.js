@@ -2,6 +2,8 @@ A5.write(0); // GND
 A7.write(1); // VCC
 A6.write(0); // Turn on the backlight
 
+var screenW = 84;
+var screenH = 48;
 
 var g; // Graphics - define globally, so it can be used by other functions
 var pitches = {
@@ -30,8 +32,9 @@ function step() {
 
 var tune = "EE EE  E E AA";
 var pos = 0;
-var i = 0;
-var win = 5;
+var score = 0;
+var win = 100;
+var music;
 
 function onInit() {
   // Setup SPI
@@ -40,15 +43,19 @@ function onInit() {
   // Initialise the LCD
   g = require("PCD8544").connect(spi,B13,B14,B15, function() {
     // When it's initialised, clear it and write some text
+    
     g.clear();
-    g.drawString('Hello Daryl!',0,0);
-    //showClock();
+    g.drawString('Hello Daryl!', 0, 0);
+    
+    screenW = g.getWidth();
+    for (var i = 0; i < screenW; i++) {
+      g.drawString('.', i, 10);
+    }
+
     // send the graphics to the display
     g.flip();
   });
-  i = 0;
-  clearInterval(music);
-  //pos = 0;
+  score = 0;
 }
 
 function showClock() {
@@ -61,36 +68,46 @@ onInit();
 
 pinMode(B4, "input_pulldown");
 var BUZZER = B7;
-var music;
 
 setWatch(function(e) {
-  i++;
-  if (i > win) return;
+  score++;
+  if (score > win) return;
   if (!g) return; // graphics not initialised yet
   g.clear();
-  if (i == win) {
+  if (score == win) {
     pos = 0;
-    g.drawString('You Won!!! ' + i,0,0);
+    g.drawString('You Won!!! ' + score,0,0);
     digitalWrite(BUZZER, 0.5);
+    clearInterval(music);
     music = setInterval(function(e) {
       //freq(1500);
       step(60);
     }, 100);
     setTimeout(function(e) {
      //digitalPulse(LED1, 1, 1500);
-    digitalPulse(LED2, 1, 1500); 
+      digitalPulse(LED2, 1, 1500); 
     }, 1000);
-    
+
   }
   else
-    g.drawString('Score: ' + i,0,0);
+    g.drawString('Score: ' + score,0,0);
+
+    var perc = (score / win) * 100;
+    for (var i = 0; i < screenW; i++) {
+      var iP = (i / screenW) * 100;
+      if (iP > perc)
+        g.drawString('.', i, 10);
+      else
+        g.drawString('|', i, 10);
+    }
+  
   // send the graphics to the display
   g.flip();
-  console.log('pressed ', i);
+  console.log('pressed ', score);
 }, B4, { repeat: true, debounce : 50, edge: "rising" });
 
 setWatch(function(e) {
-  console.log('BTN pressed');
+  console.log('Reset BTN pressed');
   onInit();
 }, BTN, { repeat: true, debounce : 50, edge: "rising" });
 
