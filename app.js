@@ -1,39 +1,32 @@
 var SerialPort = require('serialport');
-var portDKJ = new SerialPort('/dev/tty.usbmodem1411')
-// var portWIO = new SerialPort('/dev/tty.usbmodem1421')
+var port = new SerialPort(""+process.argv.slice(2));
 
-portDKJ.on('open', function() {
- portDKJ.write('main screen turn on', function(err) {
-   if (err) {
-     return console.log('Error on write: ', err.message);
-   }
- });
+var ProgressBar = require('progress');
+
+
+var bar = new ProgressBar('  score [:bar] :percent :etas', {
+    complete: '=',
+    incomplete: ' ',
+    width: 200,
+    total: 100
+  });
+
+
+console.log(process.argv.slice(2))
+port.on('open', function() {
+  port.write('main screen turn on', function(err) {
+    if (err) {
+      return console.log('Error on write: ', err.message);
+    }
+  });
 });
 
 // open errors will be emitted as an error event
-portDKJ.on('error', function(err) {
- console.log('Error: ', err.message);
+port.on('error', function(err) {
+  console.log('Error: ', err.message);
 })
 
-portDKJ.on('data', function(data) {
- console.log('Data: ', data);
+port.on('data', function(data) {
+  //console.log('Data: ', data);
+  bar.tick(0.1);
 })
-
-
-
-// portWIO.on('open', function() {
-//  portWIO.write('main screen turn on', function(err) {
-//    if (err) {
-//      return console.log('Error on write: ', err.message);
-//    }
-//  });
-// });
-
-// // open errors will be emitted as an error event
-// portWIO.on('error', function(err) {
-//  console.log('Error: ', err.message);
-// })
-
-// portWIO.on('data', function(data) {
-//  console.log('Data: ', data);
-// })
