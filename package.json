@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/jewkesy/fapfapsquirt#readme",
   "dependencies": {
+    "progress": "^1.1.8",
     "serialport": "^4.0.1"
   }
 }
